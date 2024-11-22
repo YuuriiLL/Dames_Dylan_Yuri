@@ -12,6 +12,7 @@ Date    : 2024.11.08
 import pygame
 import sys
 
+
 def bouge_droite():
     global screen, pion, largeur_x, longeur_y, pion_pos, case_size
     if pion_pos < 9:
@@ -36,8 +37,6 @@ def dessine_case():
 pygame.init()
 
 plateau = [0,1,0,1,0,1,0,1,0,1]
-
-
 
 pion_pos = 0
 
@@ -68,13 +67,13 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        btn_presse = pygame.key.get_pressed()
-        if btn_presse[pygame.K_RIGHT]:
-            bouge_droite()
-        elif btn_presse[pygame.K_LEFT]:
-            bouge_gauche()
-        elif btn_presse[pygame.K_q]:
-            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                bouge_droite()
+            elif event.key == pygame.K_LEFT:
+                bouge_gauche()
+            elif event.key == pygame.K_q:
+                running = False
         pygame.display.update()
 
 pygame.quit()
