@@ -29,13 +29,13 @@ def dessine_case():
 pygame.init()
 
 plateau = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-#asdsdsad
+
 pion_pos = 0
 
 largeur_x = 600
 longeur_y = 600  
 
-case_size = (largeur_x / 10, longeur_y / 10)#salut 
+case_size = (largeur_x / 10, longeur_y / 10)
 
 blanc = (255, 255, 255)
 noir = (0, 0, 0)
@@ -47,7 +47,7 @@ screen = pygame.display.set_mode((largeur_x, longeur_y))
 pygame.display.set_caption("MA-24 : Bases de pygame")
 screen.fill((blanc))
 
-dessine_case()#dessine case
+dessine_case()
 
 pion = pygame.image.load(path_to_images)
 pion = pygame.transform.scale(pion, (largeur_x / 10, longeur_y / 10))
