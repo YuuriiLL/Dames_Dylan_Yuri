@@ -35,7 +35,7 @@ pion_pos = 0
 largeur_x = 600
 longeur_y = 600  
 
-case_size = (largeur_x / 10, longeur_y / 10)
+case_size = (largeur_x / 10, longeur_y / 10)#salut 
 
 blanc = (255, 255, 255)
 noir = (0, 0, 0)
