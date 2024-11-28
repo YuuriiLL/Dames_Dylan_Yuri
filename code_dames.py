@@ -29,11 +29,11 @@ def dessine_case():
 pygame.init()
 
 plateau = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-
+#asdsdsad
 pion_pos = 0
 
 largeur_x = 600
-longeur_y = 600  # Ajusté pour que l'écran soit carré et afficher un damier 10x10
+longeur_y = 600  
 
 case_size = (largeur_x / 10, longeur_y / 10)
 
