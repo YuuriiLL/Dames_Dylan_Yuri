@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pygame
-import sy
+import sys
 
 def bouge_droite():
     global screen, pion, largeur_x, longeur_y, pion_pos, case_size
