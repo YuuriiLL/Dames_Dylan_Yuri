@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pygame
-import sys
+import sy
 
 def bouge_droite():
     global screen, pion, largeur_x, longeur_y, pion_pos, case_size
@@ -47,7 +47,7 @@ screen = pygame.display.set_mode((largeur_x, longeur_y))
 pygame.display.set_caption("MA-24 : Bases de pygame")
 screen.fill((blanc))
 
-dessine_case()
+dessine_case()#dessine case
 
 pion = pygame.image.load(path_to_images)
 pion = pygame.transform.scale(pion, (largeur_x / 10, longeur_y / 10))
