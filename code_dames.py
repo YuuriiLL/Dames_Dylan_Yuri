@@ -1,22 +1,37 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import pygame
 import sys
 
-def bouge_droite():
-    global screen, pion, largeur_x, longeur_y, pion_pos, case_size
-    if pion_pos < 9:
-        pion_pos += 1
+def bouge_bas_droite():
+    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    if pion_pos_x < 9 and pion_pos_y < 9:
+        pion_pos_x += 1
+        pion_pos_y += 1
         dessine_case()
-        screen.blit(pion, (pion_pos * case_size[0], 0))
+        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
 
-def bouge_gauche():
-    global screen, pion, largeur_x, longeur_y, pion_pos, case_size
-    if pion_pos > 0:
-        pion_pos -= 1
+def bouge_bas_gauche():
+    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    if pion_pos_x > 0 and pion_pos_y < 9:
+        pion_pos_x -= 1
+        pion_pos_y += 1
         dessine_case()
-        screen.blit(pion, (pion_pos * case_size[0], 0))
+        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+
+def bouge_haut_droite():
+    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    if pion_pos_x < 9 and pion_pos_y > 0:
+        pion_pos_x += 1
+        pion_pos_y -= 1
+        dessine_case()
+        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+
+def bouge_haut_gauche():
+    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    if pion_pos_x > 0 and pion_pos_y > 0:
+        pion_pos_x -= 1
+        pion_pos_y -= 1
+        dessine_case()
+        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
 
 def dessine_case():
     for i in range(10):  # Boucle pour les lignes
@@ -28,12 +43,11 @@ def dessine_case():
 
 pygame.init()
 
-plateau = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-
-pion_pos = 0
+pion_pos_x = 0
+pion_pos_y = 0
 
 largeur_x = 600
-longeur_y = 600  
+longeur_y = 600
 
 case_size = (largeur_x / 10, longeur_y / 10)
 
@@ -44,7 +58,7 @@ path_to_images = "img\\MA-24_pion.png"
 
 screen = pygame.display.set_mode((largeur_x, longeur_y))
 
-pygame.display.set_caption("MA-24 : Bases de pygame")
+pygame.display.set_caption("Déplacement diagonal")
 screen.fill((blanc))
 
 dessine_case()
@@ -57,17 +71,20 @@ pygame.display.flip()
 
 running = True
 while running:
+    keys = pygame.key.get_pressed()  # Récupérer les touches pressées
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                bouge_droite()
-            elif event.key == pygame.K_LEFT:
-                bouge_gauche()
-            elif event.key == pygame.K_q:
-                running = False
-        pygame.display.update()
+        elif keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
+            bouge_bas_droite()
+        elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
+            bouge_bas_gauche()
+        elif keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
+            bouge_haut_droite()
+        elif keys[pygame.K_UP] and keys[pygame.K_LEFT]:
+            bouge_haut_gauche()
+
+    pygame.display.update()
 
 pygame.quit()
 sys.exit()
