@@ -2,7 +2,7 @@ import pygame
 import sys
 
 def bouge_bas_droite():
-    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    global pion_pos_x, pion_pos_y
     if pion_pos_x < 9 and pion_pos_y < 9:
         pion_pos_x += 1
         pion_pos_y += 1
@@ -10,7 +10,7 @@ def bouge_bas_droite():
         screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
 
 def bouge_bas_gauche():
-    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    global pion_pos_x, pion_pos_y
     if pion_pos_x > 0 and pion_pos_y < 9:
         pion_pos_x -= 1
         pion_pos_y += 1
@@ -18,7 +18,7 @@ def bouge_bas_gauche():
         screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
 
 def bouge_haut_droite():
-    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    global pion_pos_x, pion_pos_y
     if pion_pos_x < 9 and pion_pos_y > 0:
         pion_pos_x += 1
         pion_pos_y -= 1
@@ -26,7 +26,7 @@ def bouge_haut_droite():
         screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
 
 def bouge_haut_gauche():
-    global screen, pion, pion_pos_x, pion_pos_y, case_size
+    global pion_pos_x, pion_pos_y
     if pion_pos_x > 0 and pion_pos_y > 0:
         pion_pos_x -= 1
         pion_pos_y -= 1
@@ -36,10 +36,10 @@ def bouge_haut_gauche():
 def dessine_case():
     for i in range(10):  # Boucle pour les lignes
         for a in range(10):  # Boucle pour les colonnes
-            x = i * largeur_x / 10  # Position x de la case
-            y = a * longeur_y / 10  # Position y de la case
-            couleur = blanc if (i + a) % 2 == 0 else noir  # Alternance des couleurs
-            pygame.draw.rect(screen, couleur, (x, y, largeur_x / 10, longeur_y / 10))  # Dessin de la case
+            x = i * largeur_x / 10
+            y = a * longeur_y / 10
+            couleur = blanc if (i + a) % 2 == 0 else noir
+            pygame.draw.rect(screen, couleur, (x, y, largeur_x / 10, longeur_y / 10))
 
 pygame.init()
 
@@ -55,11 +55,12 @@ blanc = (255, 255, 255)
 noir = (0, 0, 0)
 
 path_to_images = "img\\MA-24_pion.png"
+pion_noir = "img\\MA-24_pion_noir.png"
 
 screen = pygame.display.set_mode((largeur_x, longeur_y))
 
-pygame.display.set_caption("Déplacement diagonal")
-screen.fill((blanc))
+pygame.display.set_caption("Jeux dames")
+screen.fill(blanc)
 
 dessine_case()
 
@@ -69,20 +70,30 @@ screen.blit(pion, (0, 0))
 
 pygame.display.flip()
 
+# Ajout d'une temporisation minimale
+temps_derniere_action = 0
+delai = 100
+
 running = True
 while running:
-    keys = pygame.key.get_pressed()  # Récupérer les touches pressées
+    temps_actuel = pygame.time.get_ticks()
+    keys = pygame.key.get_pressed()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
-            bouge_bas_droite()
-        elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
-            bouge_bas_gauche()
-        elif keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
-            bouge_haut_droite()
-        elif keys[pygame.K_UP] and keys[pygame.K_LEFT]:
-            bouge_haut_gauche()
+        elif temps_actuel - temps_derniere_action > delai:
+            if keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
+                bouge_bas_droite()
+                temps_derniere_action = temps_actuel
+            elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
+                bouge_bas_gauche()
+                temps_derniere_action = temps_actuel
+            elif keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
+                temps_derniere_action = temps_actuel
+                pass
+            elif keys[pygame.K_UP] and keys[pygame.K_LEFT]:
+                temps_derniere_action = temps_actuel
+                pass
 
     pygame.display.update()
 
