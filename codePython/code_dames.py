@@ -44,8 +44,8 @@ case_size = (largeur_x / 10, longeur_y / 10)
 blanc = (255, 255, 255)
 noir = (0, 0, 0)
 
-path_to_pion_blanc = "img\\MA-24_pion.png"
-path_to_pion_noir = "img\\MA-24_pion_noir.png"
+path_to_pion_blanc = "../img/MA-24_pion.png"
+path_to_pion_noir = "../img/MA-24_pion_noir.png"
 
 screen = pygame.display.set_mode((largeur_x, longeur_y))
 
