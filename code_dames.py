@@ -7,7 +7,8 @@ def bouge_bas_droite():
         pion_pos_x += 1
         pion_pos_y += 1
         dessine_case()
-        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+        screen.blit(pion_blanc, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+        screen.blit(pion_noir, (pion_noir_pos_x * case_size[0], pion_noir_pos_y * case_size[1]))
 
 def bouge_bas_gauche():
     global pion_pos_x, pion_pos_y
@@ -15,23 +16,8 @@ def bouge_bas_gauche():
         pion_pos_x -= 1
         pion_pos_y += 1
         dessine_case()
-        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
-
-def bouge_haut_droite():
-    global pion_pos_x, pion_pos_y
-    if pion_pos_x < 9 and pion_pos_y > 0:
-        pion_pos_x += 1
-        pion_pos_y -= 1
-        dessine_case()
-        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
-
-def bouge_haut_gauche():
-    global pion_pos_x, pion_pos_y
-    if pion_pos_x > 0 and pion_pos_y > 0:
-        pion_pos_x -= 1
-        pion_pos_y -= 1
-        dessine_case()
-        screen.blit(pion, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+        screen.blit(pion_blanc, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+        screen.blit(pion_noir, (pion_noir_pos_x * case_size[0], pion_noir_pos_y * case_size[1]))
 
 def dessine_case():
     for i in range(10):  # Boucle pour les lignes
@@ -41,25 +27,25 @@ def dessine_case():
             couleur = blanc if (i + a) % 2 == 0 else noir
             pygame.draw.rect(screen, couleur, (x, y, largeur_x / 10, longeur_y / 10))
 
-
-
-
-
 pygame.init()
 
+# Position initiale des pions
 pion_pos_x = 0
 pion_pos_y = 0
+
+pion_noir_pos_x = 9  # Coin opposé du plateau
+pion_noir_pos_y = 9
 
 largeur_x = 600
 longeur_y = 600
 
 case_size = (largeur_x / 10, longeur_y / 10)
 
-blanc = (176, 215, 254)
-noir = (75, 124, 204)
+blanc = (255, 255, 255)
+noir = (0, 0, 0)
 
-path_to_images = "img\\MA-24_pion.png"
-pion_noir = "img\\MA-24_pion_noir.png"
+path_to_pion_blanc = "img\\MA-24_pion.png"
+path_to_pion_noir = "img\\MA-24_pion_noir.png"
 
 screen = pygame.display.set_mode((largeur_x, longeur_y))
 
@@ -68,9 +54,14 @@ screen.fill(blanc)
 
 dessine_case()
 
-pion = pygame.image.load(path_to_images)
-pion = pygame.transform.scale(pion, (largeur_x / 10, longeur_y / 10))
-screen.blit(pion, (0, 0))
+# Chargement des images des pions
+pion_blanc = pygame.image.load(path_to_pion_blanc)
+pion_blanc = pygame.transform.scale(pion_blanc, (largeur_x // 10, longeur_y // 10))
+screen.blit(pion_blanc, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
+
+pion_noir = pygame.image.load(path_to_pion_noir)
+pion_noir = pygame.transform.scale(pion_noir, (largeur_x // 10, longeur_y // 10))
+screen.blit(pion_noir, (pion_noir_pos_x * case_size[0], pion_noir_pos_y * case_size[1]))
 
 pygame.display.flip()
 
@@ -92,12 +83,6 @@ while running:
             elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
                 bouge_bas_gauche()
                 temps_derniere_action = temps_actuel
-            elif keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
-                temps_derniere_action = temps_actuel
-                pass
-            elif keys[pygame.K_UP] and keys[pygame.K_LEFT]:
-                temps_derniere_action = temps_actuel
-                pass
 
     pygame.display.update()
 
