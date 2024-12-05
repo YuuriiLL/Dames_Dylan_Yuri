@@ -20,7 +20,7 @@ def bouge_bas_gauche():
         screen.blit(pion_noir, (pion_noir_pos_x * case_size[0], pion_noir_pos_y * case_size[1]))
 
 def dessine_case():
-    for i in range(10):  # Boucle pour les lignes
+    for i in range(10):  # Boucle pour les lignes+
         for a in range(10):  # Boucle pour les colonnes
             x = i * largeur_x / 10
             y = a * longeur_y / 10
@@ -77,10 +77,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif temps_actuel - temps_derniere_action > delai:
-            if keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
+            if keys[pygame.K_RIGHT]:
                 bouge_bas_droite()
                 temps_derniere_action = temps_actuel
-            elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
+            elif keys[pygame.K_LEFT]:
                 bouge_bas_gauche()
                 temps_derniere_action = temps_actuel
 
