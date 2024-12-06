@@ -30,21 +30,22 @@ def actualise_affichage():
 # Gestion des événements et boucle principale
 temps_derniere_action = 0
 delai = 100
-running = True
 
-while running:
-    temps_actuel = pygame.time.get_ticks()
-    keys = pygame.key.get_pressed()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif temps_actuel - temps_derniere_action > delai:
-            if keys[pygame.K_RIGHT]:
-                bouge_bas_droite()
-                temps_derniere_action = temps_actuel
-            elif keys[pygame.K_LEFT]:
-                bouge_bas_gauche()
-                temps_derniere_action = temps_actuel
+def start():
+    running = True
+    while running:
+        temps_actuel = pygame.time.get_ticks()
+        keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif temps_actuel - temps_derniere_action > delai:
+                if keys[pygame.K_RIGHT]:
+                    bouge_bas_droite()
+                    temps_derniere_action = temps_actuel
+                elif keys[pygame.K_LEFT]:
+                    bouge_bas_gauche()
+                    temps_derniere_action = temps_actuel
 
 pygame.quit()
 sys.exit()
