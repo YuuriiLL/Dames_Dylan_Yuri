@@ -8,9 +8,9 @@ from code_gfx import dessine_case
 from code_rules import start
 
 pygame.init()
-
-dessine_case()
 start()
+dessine_case()
+
 actualise_affichage()
 pygame.display.flip()
 
