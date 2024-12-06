@@ -32,7 +32,6 @@ pygame.init()
 # Position initiale des pions
 pion_pos_x = 0
 pion_pos_y = 0
-
 pion_noir_pos_x = 9  # Coin opposé du plateau
 pion_noir_pos_y = 9
 
