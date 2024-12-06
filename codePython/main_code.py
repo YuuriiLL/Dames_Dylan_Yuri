@@ -3,16 +3,23 @@
 import pygame
 import sys
 
-from code_rules import actualise_affichage
-from code_gfx import dessine_case
+from code_gfx import initialiser_gfx
 from code_rules import start
 
 pygame.init()
 
-dessine_case()
-start()
-actualise_affichage()
-pygame.display.flip()
+def main():
+    """Point d'entrée du programme."""
+    pygame.init()
+
+    # Initialisation de l'interface
+    initialiser_gfx()
+
+    # Démarrage du jeu
+    start()
+
+    pygame.quit()
+    sys.exit()
 
 pygame.quit()
 sys.quit()
