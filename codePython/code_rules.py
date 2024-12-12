@@ -28,8 +28,8 @@ def actualise_affichage():
     pygame.display.update()
 
 # Gestion des événements et boucle principale
-temps_derniere_action = 0
-delai = 100
+temps_derniere_action = 1
+delai = 10
 
 def start():
     running = True
