@@ -11,6 +11,7 @@ def bouge_bas_droite():
         pion_pos_x += 1
         pion_pos_y += 1
         actualise_affichage()
+        return pion_pos_x,pion_pos_y
 
 def bouge_bas_gauche():
     """Déplace le pion blanc en bas à gauche si possible."""
@@ -20,12 +21,14 @@ def bouge_bas_gauche():
         pion_pos_y += 1
         actualise_affichage()
 
+
 def actualise_affichage():
     """Met à jour l'affichage après un mouvement."""
     dessine_case()
     screen.blit(pion_blanc, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
     screen.blit(pion_noir, (pion_noir_pos_x * case_size[0], pion_noir_pos_y * case_size[1]))
     pygame.display.update()
+
 
 # Gestion des événements et boucle principale
 temps_derniere_action = 1
@@ -46,6 +49,6 @@ def start():
                 elif keys[pygame.K_LEFT]:
                     bouge_bas_gauche()
                     temps_derniere_action = temps_actuel
-
+        pygame.display.flip()
 pygame.quit()
 sys.exit()

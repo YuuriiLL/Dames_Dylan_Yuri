@@ -6,14 +6,7 @@ largeur_x = 600
 longeur_y = 600
 case_size = (largeur_x / 10, longeur_y / 10)
 blanc = (255, 255, 255)
-noir = (0, 0, 0)
-
-# Position initiale des pions
-pion_pos_x = 0
-pion_pos_y = 0
-
-pion_noir_pos_x = 9
-pion_noir_pos_y = 9
+noir = (255,192,203)
 
 # Chemins des images
 path_to_pion_blanc = "../img/MA-24_pion.png"
@@ -45,8 +38,17 @@ def dessine_case():
 
 def placer_pions():
     """Place les pions sur le plateau."""
-    screen.blit(pion_blanc, (pion_pos_x * case_size[0], pion_pos_y * case_size[1]))
-    screen.blit(pion_noir, (pion_noir_pos_x * case_size[0], pion_noir_pos_y * case_size[1]))
+    # Placer les pions blancs (lignes 0 à 3) sur les cases noires
+    for i in range(4):
+        for j in range(10):
+            if (i + j) % 2 != 0:  # Placer sur les cases noires
+                screen.blit(pion_blanc, (j * case_size[0], i * case_size[1]))
+
+    # Placer les pions noirs (lignes 6 à 9) sur les cases noires
+    for i in range(6, 10):
+        for j in range(10):
+            if (i + j) % 2 != 0:  # Placer sur les cases noires
+                screen.blit(pion_noir, (j * case_size[0], i * case_size[1]))
 
 def initialiser_gfx():
     """Initialise l'interface graphique et les ressources."""
