@@ -34,6 +34,7 @@ def actualise_affichage():
 temps_derniere_action = 1
 delai = 10
 
+
 def start():
     running = True
     while running:
