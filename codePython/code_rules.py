@@ -14,6 +14,7 @@ def selectionner_pion(case_x, case_y):
             couleur_selectionnee = couleur
             print(f"Pion {couleur} sélectionné à {case_x}, {case_y}")
 
+
 def bouger_pion(case_x, case_y):
     global pion_selectionne, couleur_selectionnee, pions_positions
 
@@ -23,13 +24,25 @@ def bouger_pion(case_x, case_y):
         if 0 <= case_x < 10 and 0 <= case_y < 10:
             toutes_positions = [pos for positions in pions_positions.values() for pos in positions]
 
+            # Vérifier que la case cible est libre
             if (case_x, case_y) not in toutes_positions:
-                pions_positions[couleur_selectionnee].remove((x, y))
-                pions_positions[couleur_selectionnee].append((case_x, case_y))
+                # Vérifier la direction du mouvement selon la couleur
+                if couleur_selectionnee == "noir" and case_y < y:  # Noir va vers le haut
+                    pions_positions[couleur_selectionnee].remove((x, y))
+                    pions_positions[couleur_selectionnee].append((case_x, case_y))
+                    pion_selectionne = (case_x, case_y)
+                    print(f"Pion noir déplacé à {(case_x, case_y)}")
 
-                pion_selectionne = (case_x, case_y)
+                elif couleur_selectionnee == "blanc" and case_y > y:  # Blanc va vers le bas
+                    pions_positions[couleur_selectionnee].remove((x, y))
+                    pions_positions[couleur_selectionnee].append((case_x, case_y))
+                    pion_selectionne = (case_x, case_y)
+                    print(f"Pion blanc déplacé à {(case_x, case_y)}")
 
-                print(f"Pion {couleur_selectionnee} déplacé à {(case_x, case_y)}")
+                else:
+                    print("Mouvement invalide pour cette couleur")
+
+                # Actualiser l'affichage
                 actualise_affichage()
 
 
