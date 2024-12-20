@@ -1,72 +1,52 @@
 import pygame
-import sys
 
-# Dimensions et couleurs
+# Dimensions du plateau et des cases
 largeur_x = 600
-longeur_y = 600
-case_size = (largeur_x / 10, longeur_y / 10)
-blanc = (255, 255, 255)
-noir = (255,192,203)
+longueur_y = 600
+case_size = (largeur_x / 10, longueur_y / 10)
 
-# Chemins des images
+# Couleurs
+blanc = (255, 255, 255)
+noir = (255, 209, 220)
+
+# Images des pions
 path_to_pion_blanc = "../img/MA-24_pion.png"
 path_to_pion_noir = "../img/MA-24_pion_noir.png"
 
-# Initialiser Pygame
 pygame.init()
 
-# Création de la fenêtre de jeu
-screen = pygame.display.set_mode((largeur_x, longeur_y))
+# Création de la fenêtre
+screen = pygame.display.set_mode((largeur_x, longueur_y))
 pygame.display.set_caption("Jeu de dames")
-screen.fill(blanc)
 
-# Chargement et mise à l'échelle des pions
+# Chargement des images des pions
 pion_blanc = pygame.image.load(path_to_pion_blanc)
-pion_blanc = pygame.transform.scale(pion_blanc, (largeur_x // 10, longeur_y // 10))
-
+pion_blanc = pygame.transform.scale(pion_blanc, (int(case_size[0]), int(case_size[1])))
 pion_noir = pygame.image.load(path_to_pion_noir)
-pion_noir = pygame.transform.scale(pion_noir, (largeur_x // 10, longeur_y // 10))
+pion_noir = pygame.transform.scale(pion_noir, (int(case_size[0]), int(case_size[1])))
+
+# Positions initiales des pions
+pions_positions = {
+    "blanc": [(j, i) for i in range(4) for j in range(10) if (i + j) % 2 != 0],
+    "noir": [(j, i) for i in range(6, 10) for j in range(10) if (i + j) % 2 != 0],
+}
 
 def dessine_case():
-    """Dessine les cases du plateau de jeu."""
-    for i in range(10):  # Lignes
-        for a in range(10):  # Colonnes
-            x = i * largeur_x / 10
-            y = a * longeur_y / 10
-            couleur = blanc if (i + a) % 2 == 0 else noir
-            pygame.draw.rect(screen, couleur, (x, y, largeur_x / 10, longeur_y / 10))
+    for ligne in range(10):
+        for colonne in range(10):
+            x = colonne * case_size[0]
+            y = ligne * case_size[1]
+            couleur = blanc if (ligne + colonne) % 2 == 0 else noir
+            pygame.draw.rect(screen, couleur, (x, y, case_size[0], case_size[1]))
 
 def placer_pions():
-    """Place les pions sur le plateau."""
-    # Placer les pions blancs (lignes 0 à 3) sur les cases noires
-    for i in range(4):
-        for j in range(10):
-            if (i + j) % 2 != 0:  # Placer sur les cases noires
-                screen.blit(pion_blanc, (j * case_size[0], i * case_size[1]))
+    for couleur, positions in pions_positions.items():
+        pion = pion_blanc if couleur == "blanc" else pion_noir
+        for x, y in positions:
+            screen.blit(pion, (x * case_size[0], y * case_size[1]))
 
-    # Placer les pions noirs (lignes 6 à 9) sur les cases noires
-    for i in range(6, 10):
-        for j in range(10):
-            if (i + j) % 2 != 0:  # Placer sur les cases noires
-                screen.blit(pion_noir, (j * case_size[0], i * case_size[1]))
-
-def initialiser_gfx():
-    """Initialise l'interface graphique et les ressources."""
-    screen.fill(blanc)  # Réinitialise l'écran pour dessiner à nouveau les cases
-    dessine_case()      # Dessine le plateau
-    placer_pions()      # Place les pions sur le plateau
-    pygame.display.flip()  # Met à jour l'écran
-
-# Appel de la fonction d'initialisation
-initialiser_gfx()
-
-# Gestion de la boucle principale
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-# Quitter proprement
-pygame.quit()
-sys.exit()
+def actualise_affichage():
+    screen.fill(blanc)
+    dessine_case()
+    placer_pions()
+    pygame.display.update()

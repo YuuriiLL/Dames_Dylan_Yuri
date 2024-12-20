@@ -1,16 +1,19 @@
-"""---------------MAIN CODE---------------"""
-
 import pygame
 import sys
+from code_rules import selectionner_pion, bouger_pion
+from code_gfx import actualise_affichage, case_size
+from code_rules import start
 
-from code_rules import bouge_bas_droite, bouge_bas_gauche, actualise_affichage, start
-from code_gfx import dessine_case, initialiser_gfx
+# Variables globales pour suivre la sélection du pion
+pion_selectionne = None
+couleur_selectionnee = None
 
-pygame.init()
+if __name__ == "__main__":
+    pygame.init()
 
-initialiser_gfx()
+    # Lancer la boucle principale du jeu
+    start()
 
-start()
-
-pygame.quit()
-sys.exit()
+    # Quitter proprement après l'exécution du programme
+    pygame.quit()
+    sys.exit()
