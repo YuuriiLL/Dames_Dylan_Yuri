@@ -18,21 +18,25 @@ def selectionner_pion(case_x, case_y):
             return  # Sortie une fois que le pion est trouvé et sélectionné
 
 
+# Variable globale pour suivre le tour actuel
+tour_actuel = "blanc"  # Le jeu commence par le tour des blancs
+
+
 def bouger_pion(case_x, case_y):
-    global pion_selectionne, couleur_selectionnee, pions_positions
+    global pion_selectionne, couleur_selectionnee, pions_positions, tour_actuel
 
     if pion_selectionne and couleur_selectionnee:
         x, y = pion_selectionne
 
-        # Vérification si la case est dans les limites
         if 0 <= case_x < 10 and 0 <= case_y < 10:
             toutes_positions = [pos for positions in pions_positions.values() for pos in positions]
 
-<<<<<<< HEAD
+            # Vérifier que c'est le tour de la bonne couleur
+            if couleur_selectionnee != tour_actuel:
+                print(f"C'est le tour des {tour_actuel} !")
+                return  # Bloquer le mouvement si ce n'est pas le tour
+
             # Vérifier que la case cible est libre
-=======
-            # Vérification si la case n'est pas déjà occupée
->>>>>>> 823037f37119371eb9bb50f56ce317ed2fe8f6b8
             if (case_x, case_y) not in toutes_positions:
                 # Vérifier la direction du mouvement selon la couleur
                 if couleur_selectionnee == "noir" and case_y < y:  # Noir va vers le haut
@@ -50,8 +54,14 @@ def bouger_pion(case_x, case_y):
                 else:
                     print("Mouvement invalide pour cette couleur")
 
+                # Changer le tour après un mouvement valide
+                tour_actuel = "noir" if tour_actuel == "blanc" else "blanc"
+
                 # Actualiser l'affichage
                 actualise_affichage()
+            else:
+                print("La case est déjà occupée.")
+
 
 def dessiner_contour_pion(case_x, case_y):
     """Dessiner un contour autour de la case contenant le pion sélectionné"""
@@ -60,12 +70,11 @@ def dessiner_contour_pion(case_x, case_y):
         pygame.draw.rect(screen, couleur_contour, (x, y, case_size[0], case_size[1]), 3)  # 3 est l'épaisseur du contour
 
 def start():
-    global pion_selectionne, couleur_selectionnee
+    global pion_selectionne, couleur_selectionnee, tour_actuel
 
     running = True
 
     while running:
-        # Gestion des événements
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -82,7 +91,6 @@ def start():
                 if pion_selectionne and couleur_selectionnee:
                     case_x, case_y = pion_selectionne
 
-                    # Déplacer le pion en fonction des touches directionnelles
                     if event.key == pygame.K_LEFT:
                         bouger_pion(case_x - 1, case_y + 1)
 
@@ -95,8 +103,8 @@ def start():
                     elif event.key == pygame.K_DOWN:
                         bouger_pion(case_x - 1, case_y - 1)
 
-        # Actualiser l'affichage après chaque événement
         actualise_affichage()
+
 
         # Dessiner le contour si un pion est sélectionné
         if pion_selectionne:
