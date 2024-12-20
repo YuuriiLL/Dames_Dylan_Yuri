@@ -46,6 +46,7 @@ def bouger_pion(case_x, case_y):
                 actualise_affichage()
 
 
+
 def start():
     global pion_selectionne, couleur_selectionnee
 
