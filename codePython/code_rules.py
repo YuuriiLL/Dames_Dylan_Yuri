@@ -7,15 +7,30 @@ couleur_selectionnee = None
 couleur_contour = (255, 0, 0)  # Couleur du contour, rouge ici
 
 def selectionner_pion(case_x, case_y):
-    global pion_selectionne, couleur_selectionnee
+    global pion_selectionne, couleur_selectionnee, cases_possibles_affichees
 
-    # Chercher si un pion existe dans la case sélectionnée
+    # Si un pion est déjà sélectionné et qu'on clique sur le même pion, on le désélectionne
+    if pion_selectionne and (case_x, case_y) == pion_selectionne:
+        pion_selectionne = None
+        couleur_selectionnee = None
+        cases_possibles_affichees = []  # Réinitialiser les cases possibles
+        print("Pion désélectionné.")
+        actualise_affichage(cases_possibles_affichees)
+        return
+
+    # Vérifier si un pion de la même couleur existe à la nouvelle position
     for couleur, positions in pions_positions.items():
         if (case_x, case_y) in positions:
-            pion_selectionne = (case_x, case_y)
-            couleur_selectionnee = couleur
-            print(f"Pion {couleur} sélectionné à {case_x}, {case_y}")
-            return  # Sortie une fois que le pion est trouvé et sélectionné
+            if couleur == tour_actuel:  # Vérifier si c'est bien le tour de cette couleur
+                pion_selectionne = (case_x, case_y)
+                couleur_selectionnee = couleur
+                print(f"Pion {couleur} sélectionné à {case_x}, {case_y}")
+                # Calculer les cases possibles de ce pion
+                cases_possibles_affichees = cases_possibles(case_x, case_y, couleur)
+                actualise_affichage(cases_possibles_affichees)
+                return  # Sortir dès que le pion est sélectionné
+
+
 
 
 # Variable globale pour suivre le tour actuel
@@ -27,6 +42,11 @@ def bouger_pion(case_x, case_y):
 
     if pion_selectionne and couleur_selectionnee:
         x, y = pion_selectionne
+
+        # Vérifier si la case sélectionnée est parmi les cases possibles
+        if (case_x, case_y) not in cases_possibles_affichees:
+            print("Mouvement invalide pour ce pion.")
+            return  # Ne rien faire si le mouvement n'est pas valide
 
         if 0 <= case_x < 10 and 0 <= case_y < 10:
             toutes_positions = [pos for positions in pions_positions.values() for pos in positions]
@@ -58,9 +78,10 @@ def bouger_pion(case_x, case_y):
                 tour_actuel = "noir" if tour_actuel == "blanc" else "blanc"
 
                 # Actualiser l'affichage
-                actualise_affichage()
+                actualise_affichage(cases_possibles_affichees)
             else:
                 print("La case est déjà occupée.")
+
 
 
 def dessiner_contour_pion(case_x, case_y):
@@ -69,10 +90,38 @@ def dessiner_contour_pion(case_x, case_y):
         x, y = case_x * case_size[0], case_y * case_size[1]
         pygame.draw.rect(screen, couleur_contour, (x, y, case_size[0], case_size[1]), 3)  # 3 est l'épaisseur du contour
 
+
+def cases_possibles(case_x, case_y, couleur):
+    cases_possibles = []
+
+    # Pour les pions noirs, on se déplace vers le haut
+    if couleur == "noir":
+        # Mouvement vers la gauche-haut
+        if case_x - 1 >= 0 and case_y - 1 >= 0:
+            cases_possibles.append((case_x - 1, case_y - 1))
+        # Mouvement vers la droite-haut
+        if case_x + 1 < 10 and case_y - 1 >= 0:
+            cases_possibles.append((case_x + 1, case_y - 1))
+
+    # Pour les pions blancs, on se déplace vers le bas
+    elif couleur == "blanc":
+        # Mouvement vers la gauche-bas
+        if case_x - 1 >= 0 and case_y + 1 < 10:
+            cases_possibles.append((case_x - 1, case_y + 1))
+        # Mouvement vers la droite-bas
+        if case_x + 1 < 10 and case_y + 1 < 10:
+            cases_possibles.append((case_x + 1, case_y + 1))
+
+    return cases_possibles
+
+
+
+
 def start():
-    global pion_selectionne, couleur_selectionnee, tour_actuel
+    global pion_selectionne, couleur_selectionnee, tour_actuel, cases_possibles_affichees
 
     running = True
+    cases_possibles_affichees = []  # Liste des cases où le joueur peut déplacer son pion
 
     while running:
         for event in pygame.event.get():
@@ -84,32 +133,30 @@ def start():
                 case_x = int(mouse_x // case_size[0])
                 case_y = int(mouse_y // case_size[1])
 
-                # Sélectionner le pion lorsqu'on clique sur une case
-                selectionner_pion(case_x, case_y)
+                if pion_selectionne:  # Si un pion est sélectionné
+                    if (case_x, case_y) in cases_possibles_affichees:
+                        # Si la case est valide, déplacer le pion
+                        bouger_pion(case_x, case_y)
+                        pion_selectionne = None  # Deselect the pion after moving
+                        couleur_selectionnee = None
+                        cases_possibles_affichees = []  # Réinitialiser les cases possibles
+                    else:
+                        print("Case invalide pour ce mouvement.")
+                else:
+                    # Sélectionner un pion
+                    selectionner_pion(case_x, case_y)
 
-            elif event.type == pygame.KEYDOWN:
-                if pion_selectionne and couleur_selectionnee:
-                    case_x, case_y = pion_selectionne
+                    if pion_selectionne:  # Si un pion est sélectionné, calculer les cases possibles
+                        cases_possibles_affichees = cases_possibles(case_x, case_y, couleur_selectionnee)
 
-                    if event.key == pygame.K_LEFT:
-                        bouger_pion(case_x - 1, case_y + 1)
+        # Actualiser l'affichage
+        actualise_affichage(cases_possibles_affichees)
 
-                    elif event.key == pygame.K_RIGHT:
-                        bouger_pion(case_x + 1, case_y + 1)
-
-                    elif event.key == pygame.K_UP:
-                        bouger_pion(case_x + 1, case_y - 1)
-
-                    elif event.key == pygame.K_DOWN:
-                        bouger_pion(case_x - 1, case_y - 1)
-
-        actualise_affichage()
-
-
-        # Dessiner le contour si un pion est sélectionné
+        # Dessiner le contour autour du pion sélectionné (si sélectionné)
         if pion_selectionne:
             case_x, case_y = pion_selectionne
             dessiner_contour_pion(case_x, case_y)
 
-        # Mettre à jour l'écran avec le dessin effectué
-        pygame.display.flip()
+        pygame.display.flip()  # Mettre à jour l'écran
+
+
