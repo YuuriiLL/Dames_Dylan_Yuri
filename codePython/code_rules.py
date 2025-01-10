@@ -33,6 +33,8 @@ def selectionner_pion(case_x, case_y):
 
 
 
+
+
 # Variable globale pour suivre le tour actuel
 tour_actuel = "blanc"  # Le jeu commence par le tour des blancs
 
@@ -58,21 +60,24 @@ def bouger_pion(case_x, case_y):
 
             # Vérifier que la case cible est libre
             if (case_x, case_y) not in toutes_positions:
-                # Vérifier la direction du mouvement selon la couleur
-                if couleur_selectionnee == "noir" and case_y < y:  # Noir va vers le haut
-                    pions_positions[couleur_selectionnee].remove((x, y))
-                    pions_positions[couleur_selectionnee].append((case_x, case_y))
-                    pion_selectionne = (case_x, case_y)
-                    print(f"Pion noir déplacé à {(case_x, case_y)}")
+                # Vérifier si c'est un saut (capture)
+                if abs(case_x - x) == 2 and abs(case_y - y) == 2:
+                    case_capturee_x = (x + case_x) // 2
+                    case_capturee_y = (y + case_y) // 2
 
-                elif couleur_selectionnee == "blanc" and case_y > y:  # Blanc va vers le bas
-                    pions_positions[couleur_selectionnee].remove((x, y))
-                    pions_positions[couleur_selectionnee].append((case_x, case_y))
-                    pion_selectionne = (case_x, case_y)
-                    print(f"Pion blanc déplacé à {(case_x, case_y)}")
+                    # Retirer le pion adverse de la position de capture
+                    if couleur_selectionnee == "noir":
+                        pions_positions["blanc"].remove((case_capturee_x, case_capturee_y))
+                    else:
+                        pions_positions["noir"].remove((case_capturee_x, case_capturee_y))
 
-                else:
-                    print("Mouvement invalide pour cette couleur")
+                    print(f"Pion {couleur_selectionnee} a mangé un pion adverse à {(case_capturee_x, case_capturee_y)}")
+
+                # Déplacer le pion
+                pions_positions[couleur_selectionnee].remove((x, y))
+                pions_positions[couleur_selectionnee].append((case_x, case_y))
+                pion_selectionne = (case_x, case_y)
+                print(f"Pion {couleur_selectionnee} déplacé à {(case_x, case_y)}")
 
                 # Changer le tour après un mouvement valide
                 tour_actuel = "noir" if tour_actuel == "blanc" else "blanc"
@@ -81,6 +86,7 @@ def bouger_pion(case_x, case_y):
                 actualise_affichage(cases_possibles_affichees)
             else:
                 print("La case est déjà occupée.")
+
 
 
 
@@ -103,6 +109,16 @@ def cases_possibles(case_x, case_y, couleur):
         if case_x + 1 < 10 and case_y - 1 >= 0:
             cases_possibles.append((case_x + 1, case_y - 1))
 
+        # Capture d'un pion adverse
+        # Si un pion adverse est entre le pion sélectionné et une case vide
+        if case_x - 2 >= 0 and case_y - 2 >= 0:
+            if (case_x - 1, case_y - 1) in pions_positions["blanc"]:
+                cases_possibles.append((case_x - 2, case_y - 2))
+
+        if case_x + 2 < 10 and case_y - 2 >= 0:
+            if (case_x + 1, case_y - 1) in pions_positions["blanc"]:
+                cases_possibles.append((case_x + 2, case_y - 2))
+
     # Pour les pions blancs, on se déplace vers le bas
     elif couleur == "blanc":
         # Mouvement vers la gauche-bas
@@ -112,9 +128,17 @@ def cases_possibles(case_x, case_y, couleur):
         if case_x + 1 < 10 and case_y + 1 < 10:
             cases_possibles.append((case_x + 1, case_y + 1))
 
+        # Capture d'un pion adverse
+        # Si un pion adverse est entre le pion sélectionné et une case vide
+        if case_x - 2 >= 0 and case_y + 2 < 10:
+            if (case_x - 1, case_y + 1) in pions_positions["noir"]:
+                cases_possibles.append((case_x - 2, case_y + 2))
+
+        if case_x + 2 < 10 and case_y + 2 < 10:
+            if (case_x + 1, case_y + 1) in pions_positions["noir"]:
+                cases_possibles.append((case_x + 2, case_y + 2))
+
     return cases_possibles
-
-
 
 
 def start():
@@ -158,5 +182,6 @@ def start():
             dessiner_contour_pion(case_x, case_y)
 
         pygame.display.flip()  # Mettre à jour l'écran
+
 
 

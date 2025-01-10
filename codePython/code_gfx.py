@@ -54,7 +54,8 @@ def placer_pions():
 
 def actualise_affichage(cases_possibles_affichees):
     screen.fill(blanc)
-    dessine_case(cases_possibles_affichees)
+    dessine_case(cases_possibles_affichees)  # Afficher les cases possibles en vert
     placer_pions()
     pygame.display.update()
+
 
