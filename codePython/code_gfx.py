@@ -12,6 +12,8 @@ noir = (255, 209, 220)
 # Images des pions
 path_to_pion_blanc = "../img/MA-24_pion.png"
 path_to_pion_noir = "../img/MA-24_pion_noir.png"
+path_to_dame_blanche = "../img/MA-24_dame_blanche.png"
+path_to_dame_noire = "../img/MA-24_dame_noire.png"
 
 pygame.init()
 
@@ -24,6 +26,10 @@ pion_blanc = pygame.image.load(path_to_pion_blanc)
 pion_blanc = pygame.transform.scale(pion_blanc, (int(case_size[0]), int(case_size[1])))
 pion_noir = pygame.image.load(path_to_pion_noir)
 pion_noir = pygame.transform.scale(pion_noir, (int(case_size[0]), int(case_size[1])))
+dame_blanche = pygame.image.load(path_to_dame_blanche)
+dame_blanche = pygame.transform.scale(dame_blanche, (int(case_size[0]), int(case_size[1])))
+dame_noire = pygame.image.load(path_to_dame_noire)
+dame_noire = pygame.transform.scale(dame_noire, (int(case_size[0]), int(case_size[1])))
 
 # Positions initiales des pions
 pions_positions = {
@@ -48,14 +54,20 @@ def dessine_case(cases_possibles=[]):
 
 def placer_pions():
     for couleur, positions in pions_positions.items():
-        pion = pion_blanc if couleur == "blanc" else pion_noir
-        for x, y in positions:
-            screen.blit(pion, (x * case_size[0], y * case_size[1]))
+        for pion in positions:
+            x, y = pion[0], pion[1]
+            if len(pion) > 2 and pion[2] == "reine":
+                pion_image = dame_blanche if couleur == "blanc" else dame_noire
+            else:
+                pion_image = pion_blanc if couleur == "blanc" else pion_noir
+            screen.blit(pion_image, (x * case_size[0], y * case_size[1]))
+
 
 def actualise_affichage(cases_possibles_affichees):
     screen.fill(blanc)
     dessine_case(cases_possibles_affichees)  # Afficher les cases possibles en vert
     placer_pions()
     pygame.display.update()
+
 
 

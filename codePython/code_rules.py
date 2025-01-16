@@ -9,8 +9,8 @@ couleur_contour = (255, 0, 0)  # Couleur du contour, rouge ici
 def selectionner_pion(case_x, case_y):
     global pion_selectionne, couleur_selectionnee, cases_possibles_affichees
 
-    # Si un pion est déjà sélectionné et qu'on clique sur le même pion, on le désélectionne
-    if pion_selectionne and (case_x, case_y) == pion_selectionne:
+    # Si un pion est déjà sélectionné et qu'on clique sur le même pion
+    if pion_selectionne == (case_x, case_y):
         pion_selectionne = None
         couleur_selectionnee = None
         cases_possibles_affichees = []  # Réinitialiser les cases possibles
@@ -18,21 +18,23 @@ def selectionner_pion(case_x, case_y):
         actualise_affichage(cases_possibles_affichees)
         return
 
-    # Vérifier si un pion de la même couleur existe à la nouvelle position
+    # Vérifier si un pion existe à la position sélectionnée
     for couleur, positions in pions_positions.items():
         if (case_x, case_y) in positions:
-            if couleur == tour_actuel:  # Vérifier si c'est bien le tour de cette couleur
+            if couleur == tour_actuel:  # Vérifier que c'est le tour de cette couleur
                 pion_selectionne = (case_x, case_y)
                 couleur_selectionnee = couleur
-                print(f"Pion {couleur} sélectionné à {case_x}, {case_y}")
-                # Calculer les cases possibles de ce pion
                 cases_possibles_affichees = cases_possibles(case_x, case_y, couleur)
+                print(f"Pion {couleur} sélectionné à {case_x}, {case_y}")
                 actualise_affichage(cases_possibles_affichees)
-                return  # Sortir dès que le pion est sélectionné
+                return
 
-
-
-
+    # Si la case sélectionnée ne contient pas de pion valide, désélectionner
+    pion_selectionne = None
+    couleur_selectionnee = None
+    cases_possibles_affichees = []
+    print("Aucun pion sélectionné.")
+    actualise_affichage(cases_possibles_affichees)
 
 
 # Variable globale pour suivre le tour actuel
@@ -44,11 +46,6 @@ def bouger_pion(case_x, case_y):
 
     if pion_selectionne and couleur_selectionnee:
         x, y = pion_selectionne
-
-        # Vérifier si la case sélectionnée est parmi les cases possibles
-        if (case_x, case_y) not in cases_possibles_affichees:
-            print("Mouvement invalide pour ce pion.")
-            return  # Ne rien faire si le mouvement n'est pas valide
 
         if 0 <= case_x < 10 and 0 <= case_y < 10:
             toutes_positions = [pos for positions in pions_positions.values() for pos in positions]
@@ -73,9 +70,21 @@ def bouger_pion(case_x, case_y):
 
                     print(f"Pion {couleur_selectionnee} a mangé un pion adverse à {(case_capturee_x, case_capturee_y)}")
 
-                # Déplacer le pion
-                pions_positions[couleur_selectionnee].remove((x, y))
-                pions_positions[couleur_selectionnee].append((case_x, case_y))
+                # Promotion en reine si le pion atteint la dernière rangée
+                if couleur_selectionnee == "blanc" and case_y == 9:
+                    pions_positions["blanc"].remove((x, y))
+                    pions_positions["blanc"].append((case_x, case_y, "reine"))  # Ajouter l'attribut 'reine'
+                    print("Un pion blanc est devenu reine !")
+                elif couleur_selectionnee == "noir" and case_y == 0:
+                    pions_positions["noir"].remove((x, y))
+                    pions_positions["noir"].append((case_x, case_y, "reine"))  # Ajouter l'attribut 'reine'
+                    print("Un pion noir est devenu reine !")
+                else:
+                    # Déplacement normal du pion
+                    pions_positions[couleur_selectionnee].remove((x, y))
+                    pions_positions[couleur_selectionnee].append((case_x, case_y))
+
+                # Mettre à jour la sélection et le tour
                 pion_selectionne = (case_x, case_y)
                 print(f"Pion {couleur_selectionnee} déplacé à {(case_x, case_y)}")
 
@@ -99,45 +108,55 @@ def dessiner_contour_pion(case_x, case_y):
 
 def cases_possibles(case_x, case_y, couleur):
     cases_possibles = []
+    toutes_positions = [pos for positions in pions_positions.values() for pos in positions]
 
-    # Pour les pions noirs, on se déplace vers le haut
+    # Vérification des captures possibles
     if couleur == "noir":
-        # Mouvement vers la gauche-haut
-        if case_x - 1 >= 0 and case_y - 1 >= 0:
-            cases_possibles.append((case_x - 1, case_y - 1))
-        # Mouvement vers la droite-haut
-        if case_x + 1 < 10 and case_y - 1 >= 0:
-            cases_possibles.append((case_x + 1, case_y - 1))
-
-        # Capture d'un pion adverse
-        # Si un pion adverse est entre le pion sélectionné et une case vide
+        # Capture possible vers la gauche-haut
         if case_x - 2 >= 0 and case_y - 2 >= 0:
-            if (case_x - 1, case_y - 1) in pions_positions["blanc"]:
+            if (case_x - 1, case_y - 1) in pions_positions["blanc"] and (
+            case_x - 2, case_y - 2) not in toutes_positions:
                 cases_possibles.append((case_x - 2, case_y - 2))
 
+        # Capture possible vers la droite-haut
         if case_x + 2 < 10 and case_y - 2 >= 0:
-            if (case_x + 1, case_y - 1) in pions_positions["blanc"]:
+            if (case_x + 1, case_y - 1) in pions_positions["blanc"] and (
+            case_x + 2, case_y - 2) not in toutes_positions:
                 cases_possibles.append((case_x + 2, case_y - 2))
 
-    # Pour les pions blancs, on se déplace vers le bas
     elif couleur == "blanc":
-        # Mouvement vers la gauche-bas
-        if case_x - 1 >= 0 and case_y + 1 < 10:
-            cases_possibles.append((case_x - 1, case_y + 1))
-        # Mouvement vers la droite-bas
-        if case_x + 1 < 10 and case_y + 1 < 10:
-            cases_possibles.append((case_x + 1, case_y + 1))
-
-        # Capture d'un pion adverse
-        # Si un pion adverse est entre le pion sélectionné et une case vide
+        # Capture possible vers la gauche-bas
         if case_x - 2 >= 0 and case_y + 2 < 10:
-            if (case_x - 1, case_y + 1) in pions_positions["noir"]:
+            if (case_x - 1, case_y + 1) in pions_positions["noir"] and (case_x - 2, case_y + 2) not in toutes_positions:
                 cases_possibles.append((case_x - 2, case_y + 2))
 
+        # Capture possible vers la droite-bas
         if case_x + 2 < 10 and case_y + 2 < 10:
-            if (case_x + 1, case_y + 1) in pions_positions["noir"]:
+            if (case_x + 1, case_y + 1) in pions_positions["noir"] and (case_x + 2, case_y + 2) not in toutes_positions:
                 cases_possibles.append((case_x + 2, case_y + 2))
 
+    # Si des captures sont possibles, on retourne uniquement ces cases
+    if cases_possibles:
+        return cases_possibles
+
+    # Sinon, on retourne aussi les mouvements normaux
+    if couleur == "noir":
+        # Mouvement normal vers la gauche-haut
+        if case_x - 1 >= 0 and case_y - 1 >= 0 and (case_x - 1, case_y - 1) not in toutes_positions:
+            cases_possibles.append((case_x - 1, case_y - 1))
+
+        # Mouvement normal vers la droite-haut
+        if case_x + 1 < 10 and case_y - 1 >= 0 and (case_x + 1, case_y - 1) not in toutes_positions:
+            cases_possibles.append((case_x + 1, case_y - 1))
+
+    elif couleur == "blanc":
+        # Mouvement normal vers la gauche-bas
+        if case_x - 1 >= 0 and case_y + 1 < 10 and (case_x - 1, case_y + 1) not in toutes_positions:
+            cases_possibles.append((case_x - 1, case_y + 1))
+
+        # Mouvement normal vers la droite-bas
+        if case_x + 1 < 10 and case_y + 1 < 10 and (case_x + 1, case_y + 1) not in toutes_positions:
+            cases_possibles.append((case_x + 1, case_y + 1))
     return cases_possibles
 
 
@@ -157,21 +176,26 @@ def start():
                 case_x = int(mouse_x // case_size[0])
                 case_y = int(mouse_y // case_size[1])
 
-                if pion_selectionne:  # Si un pion est sélectionné
-                    if (case_x, case_y) in cases_possibles_affichees:
-                        # Si la case est valide, déplacer le pion
-                        bouger_pion(case_x, case_y)
-                        pion_selectionne = None  # Deselect the pion after moving
+                # Si un pion est déjà sélectionné
+                if pion_selectionne:
+                    # Si on clique sur la même case, désélectionner le pion
+                    if (case_x, case_y) == pion_selectionne:
+                        pion_selectionne = None
                         couleur_selectionnee = None
-                        cases_possibles_affichees = []  # Réinitialiser les cases possibles
+                        cases_possibles_affichees = []
+                        print("Pion désélectionné.")
+                        actualise_affichage(cases_possibles_affichees)
+                    # Si la case est valide pour un déplacement
+                    elif (case_x, case_y) in cases_possibles_affichees:
+                        bouger_pion(case_x, case_y)
+                        pion_selectionne = None
+                        couleur_selectionnee = None
+                        cases_possibles_affichees = []
                     else:
                         print("Case invalide pour ce mouvement.")
                 else:
-                    # Sélectionner un pion
+                    # Si aucun pion n'est sélectionné, tenter de sélectionner un pion
                     selectionner_pion(case_x, case_y)
-
-                    if pion_selectionne:  # Si un pion est sélectionné, calculer les cases possibles
-                        cases_possibles_affichees = cases_possibles(case_x, case_y, couleur_selectionnee)
 
         # Actualiser l'affichage
         actualise_affichage(cases_possibles_affichees)
@@ -182,6 +206,7 @@ def start():
             dessiner_contour_pion(case_x, case_y)
 
         pygame.display.flip()  # Mettre à jour l'écran
+
 
 
 
