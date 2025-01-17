@@ -1,3 +1,16 @@
+"""
+Project Name : Jeu de dames
+Date : 17.01.2025
+Auteur : Dylan Pinto, Yuri Lima
+
+# Sources
+    ChatGPT
+    Forums
+    Code de base donnée par le professeur
+    Connaisances de bases
+"""
+
+
 import pygame
 import sys
 from code_rules import selectionner_pion, bouger_pion
@@ -14,6 +27,6 @@ if __name__ == "__main__":
     # Lancer la boucle principale du jeu
     start()
 
-    # Quitter proprement après l'exécution du programme
+    # Quitter
     pygame.quit()
     sys.exit()
